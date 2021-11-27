@@ -29,8 +29,11 @@ void get_URL(const string &host, const string &path) {
     cmd = "Host: " + host + "\r\n";
     tcp.write(cmd);
     tcp.write("Connection: close\r\n\r\n");
-    while((recv = tcp.read()) != EOF) {
-        cout << recv << endl;
+    while(1) {
+        recv = tcp.read();
+        if (recv != "")
+            cout << recv << endl;
+        else break;
     }
 }
 
