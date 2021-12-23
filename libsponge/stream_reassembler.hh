@@ -5,13 +5,35 @@
 
 #include <cstdint>
 #include <string>
+#include <set>
 
 //! \brief A class that assembles a series of excerpts from a byte stream (possibly out of order,
 //! possibly overlapping) into an in-order byte stream.
 class StreamReassembler {
   private:
     // Your code here -- add private members as necessary.
+    
+    // Our final goal is to assemble a seires of contiguous substrings from the input stream which may be out of order.
+    // The key point is to merge the substrings into some larger contiguous strings.
+    // Since we will continuously update the structure of the substrings, 
+    // we should use a effective data structure to store the substrings 
+    // which should support efficient insertion and deletion, should be in order, and should be easy to find a substring.
+    // Thus, we can choose heap or RB Tree to implement the data structure.
+    // In this lab, we will use STL set which uses RB Tree to implement the data structure.
 
+    struct SubString {
+      size_t start_index = 0;
+      size_t length = 0;
+      std::string data = "";
+      bool operator<(const SubString &other) const {
+        return start_index < other.start_index;
+      }
+    };
+    std::set<SubString> _substrings = {};
+    size_t _unassembled_bytes = 0;
+    size_t _head_index = 0;                 // the index of the first byte in the stream window
+    bool _eof_flag = false;
+    int _merge_substring(SubString &s1, const SubString &s2);
     ByteStream _output;  //!< The reassembled in-order byte stream
     size_t _capacity;    //!< The maximum number of bytes
 
